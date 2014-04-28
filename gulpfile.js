@@ -8,18 +8,16 @@ var bust = require('gulp-buster');
 
 var paths = {
 	scripts: ['src/main.begin.coffee', 'src/main/**/*.coffee', 'src/main.end.coffee'],
-	images: 'client/img/**/*',
 	app: 'meteor/public/app/',
-	main: 'meteor/public/main.js',
-	resource: [, 'meteor/public/res/**']
+	public: 'meteor/public/'
 };
 
 gulp.task('doctor', function() {
 	if (!fs.existsSync('cocos2d-js')) {
-		gutil.log('cocos2d-js project not found, please run command: '.red + 'cocos new -p org.project.name -l js -d cocos2d-js app');
+		gutil.log(gutil.colors.red('cocos2d-js project not found, please run command: ') + 'cocos new -p org.project.name -l js -d cocos2d-js app');
 	}
 	else {
-		gutil.log('cocos2d-js project founded!'.green);
+		gutil.log(gutil.colors.green('cocos2d-js project founded!'));
 	}
 });
 
@@ -41,4 +39,13 @@ gulp.task('release', function () {
 	.pipe(gulp.dest('cocos2d-js/app/'));
 })
 
-gulp.task('default', ['build']);
+gulp.task('busters', function() {
+	var oldCwd = process.cwd();
+	process.chdir(paths.public);
+	gulp.src("app/**")
+	.pipe(bust('busters.json'))
+	.pipe(gulp.dest('.'));
+	process.chdir(oldCwd);
+});
+
+gulp.task('default', ['build', 'busters', 'release']);
