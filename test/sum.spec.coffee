@@ -1,5 +1,5 @@
 assert = require 'assert'
-add = (require '../../../lib/sum.coffee').add
+add = (require '../meteor/lib/sum.coffee').add
 
 describe 'Sum', ->
 	it 'test add', ->
