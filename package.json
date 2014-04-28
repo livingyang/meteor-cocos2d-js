@@ -21,5 +21,9 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/livingyang/meteor-cocos2d-js/issues"
+  },
+  "devDependencies": {
+    "gulp": "~3.6.2",
+    "gulp-util": "~2.2.14"
   }
 }
