@@ -6,8 +6,9 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var bust = require('gulp-buster');
 
+console.log(gulp);
 var paths = {
-	scripts: ['src/app.begin.coffee', 'src/app/**/*.coffee', 'src/app.end.coffee'],
+	scripts: ['src/main.begin.coffee', 'src/main/**/*.coffee', 'src/main.end.coffee'],
 	images: 'client/img/**/*',
 	resource: 'client/resource/**'
 };
@@ -24,15 +25,13 @@ gulp.task('doctor', function() {
 gulp.task('build', function() {
 	return gulp.src(paths.scripts)
 	.pipe(coffee())
-	.pipe(concat('app.js'))
+	.pipe(concat('main.js'))
 	.pipe(gulp.dest('meteor/public'));
 });
 
-gulp.task('release', function() {
-	return gulp.src(paths.scripts)
-	.pipe(coffee())
+gulp.task('release', ['build'], function() {
+	return gulp.src('meteor/public/main.js')
 	.pipe(uglify())
-	.pipe(concat('app.js'))
 	.pipe(gulp.dest('meteor/public'));
 });
 
