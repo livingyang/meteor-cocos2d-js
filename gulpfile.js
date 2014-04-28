@@ -6,16 +6,17 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var bust = require('gulp-buster');
 
-console.log(gulp);
 var paths = {
 	scripts: ['src/main.begin.coffee', 'src/main/**/*.coffee', 'src/main.end.coffee'],
 	images: 'client/img/**/*',
-	resource: 'client/resource/**'
+	app: 'meteor/public/app/',
+	main: 'meteor/public/main.js',
+	resource: [, 'meteor/public/res/**']
 };
 
 gulp.task('doctor', function() {
 	if (!fs.existsSync('cocos2d-js')) {
-		gutil.log('cocos2d-js project not found, please run command: '.red + 'cocos new -p com.project.name -l js -d cocos2d-js projectname');
+		gutil.log('cocos2d-js project not found, please run command: '.red + 'cocos new -p org.project.name -l js -d cocos2d-js app');
 	}
 	else {
 		gutil.log('cocos2d-js project founded!'.green);
@@ -26,13 +27,18 @@ gulp.task('build', function() {
 	return gulp.src(paths.scripts)
 	.pipe(coffee())
 	.pipe(concat('main.js'))
-	.pipe(gulp.dest('meteor/public'));
+	.pipe(gulp.dest(paths.app));
 });
 
-gulp.task('release', ['build'], function() {
-	return gulp.src('meteor/public/main.js')
+gulp.task('uglify', ['build'], function() {
+	return gulp.src(paths.app + 'main.js')
 	.pipe(uglify())
-	.pipe(gulp.dest('meteor/public'));
+	.pipe(gulp.dest(paths.app));
 });
 
-gulp.task('default', ['doctor']);
+gulp.task('release', function () {
+	return gulp.src(paths.app + "**")
+	.pipe(gulp.dest('cocos2d-js/app/'));
+})
+
+gulp.task('default', ['build']);
