@@ -30,32 +30,55 @@ gulp.task('build', function() {
 	.pipe(gulp.dest(paths.app));
 });
 
-gulp.task('uglify', ['build'], function() {
-	return gulp.src(paths.app + 'main.js')
+gulp.task('uglify', function() {
+	return gulp.src(paths.scripts)
+	.pipe(coffee())
+	.pipe(concat('main.js'))
 	.pipe(uglify())
 	.pipe(gulp.dest(paths.app));
 });
 
-gulp.task('release', ['uglify', 'busters'], function () {
-	// 1 copy resource
-	gulp.src(paths.app + "**")
-	.pipe(gulp.dest(paths.cocos2d));
-
-	// 2 add busters to project.json
-	gulp.src(paths.cocos2d + 'project.json')
-	.pipe(jeditor({
-		busters: JSON.parse(String(fs.readFileSync(paths.public + 'busters.json')))
-	}))
-	.pipe(gulp.dest(paths.cocos2d));
-})
-
 gulp.task('busters', function() {
 	var oldCwd = process.cwd();
-	process.chdir(paths.public);
+	var stream = process.chdir(paths.public);
 	gulp.src("app/**")
 	.pipe(bust('busters.json'))
 	.pipe(gulp.dest('.'));
 	process.chdir(oldCwd);
 });
 
-gulp.task('default', ['build', 'busters']);
+gulp.task('watch-coffee-build', function () {
+	gulp.watch(paths.scripts, ['build']);
+})
+
+gulp.task('watch-coffee-uglify', function () {
+	gulp.watch(paths.scripts, ['uglify']);
+})
+
+gulp.task('watch-resource', function () {
+	gulp.watch(paths.app + '**', ['busters'])
+})
+
+gulp.task('publish', function () {
+	// 1 copy resource
+	gulp.src(paths.app + "**")
+	.pipe(gulp.dest(paths.cocos2d));
+
+	// 2 add busters to project.json
+	return gulp.src(paths.cocos2d + 'project.json')
+	.pipe(jeditor(function(json) {
+		json.busters = JSON.parse(String(fs.readFileSync(paths.public + 'busters.json')));
+		return json;
+	}))
+	.pipe(gulp.dest(paths.cocos2d));
+});
+
+gulp.task('debug', ['watch-coffee-build', 'watch-resource'], function () {
+	gulp.watch(paths.public + 'busters.json', ['publish']);
+})
+
+gulp.task('release', ['watch-coffee-uglify', 'watch-resource'], function () {
+	gulp.watch(paths.public + 'busters.json', ['publish']);
+})
+
+gulp.task('default', ['debug']);
