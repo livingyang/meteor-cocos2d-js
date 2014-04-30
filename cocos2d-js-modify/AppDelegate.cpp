@@ -59,8 +59,10 @@ bool AppDelegate::applicationDidFinishLaunching()
     sc->addRegisterCallback(MinXmlHttpRequest::_js_register);
     sc->start();
     
-    FileUtils::getInstance()->addSearchPath(FileUtils::getInstance()->getWritablePath());
-
+    std::vector<std::string> searchPaths;
+    searchPaths.push_back(FileUtils::getInstance()->getWritablePath() + "app");
+    FileUtils::getInstance()->setSearchPaths(searchPaths);
+    
     ScriptEngineProtocol *engine = ScriptingCore::getInstance();
 	ScriptEngineManager::getInstance()->setScriptEngine(engine);
 	ScriptingCore::getInstance()->runScript("main.js");

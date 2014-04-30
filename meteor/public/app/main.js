@@ -69,14 +69,14 @@
     xhr.onreadystatechange = function() {
       var filePath, localBusters;
       localBusters = (JSON.parse(cc.FileUtils.getInstance().getStringFromFile('project.json'))).busters;
-      if (xhr.readyState === 4 && xhr.status === 200) {
+      if (xhr.readyState === 4 && xhr.status === 200 && typeof xhr.response === 'object') {
         for (filePath in xhr.response) {
           downloadFile(serverUrl, filePath, xhr.response[filePath], localBusters[filePath], cc.sys.localStorage.getItem(filePath));
         }
         checkDownloadCount();
       } else {
         cc.log("ResourceSynchronizer get resource version faild.");
-        cc.log("See how to start server at: https://github.com/livingyang/ResourceSynchronizerServer");
+        cc.log("See how to start server at: https://github.com/livingyang/meteor-cocos2d-js");
       }
     };
     return xhr.send();

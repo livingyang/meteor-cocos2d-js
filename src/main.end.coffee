@@ -37,13 +37,13 @@ ResourceSynchronizer = (serverUrl, versionFile, onComplete) ->
 	xhr.open "GET", serverUrl + versionFile
 	xhr.onreadystatechange = ->
 		localBusters = (JSON.parse cc.FileUtils.getInstance().getStringFromFile 'project.json').busters
-		if xhr.readyState is 4 and xhr.status is 200
+		if xhr.readyState is 4 and xhr.status is 200 and typeof xhr.response is 'object'
 			for filePath of xhr.response
 				downloadFile serverUrl, filePath, xhr.response[filePath], localBusters[filePath], cc.sys.localStorage.getItem(filePath)
 			checkDownloadCount()
 		else
 			cc.log "ResourceSynchronizer get resource version faild."
-			cc.log "See how to start server at: https://github.com/livingyang/ResourceSynchronizerServer"
+			cc.log "See how to start server at: https://github.com/livingyang/meteor-cocos2d-js"
 		return
 
 	xhr.send()
