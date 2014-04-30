@@ -1,5 +1,3 @@
-cc.game.run()
-
 ResourceSynchronizer = (serverUrl, versionFile, onComplete) ->
 	downloadCount = 0
 	checkDownloadCount = ->
@@ -48,4 +46,11 @@ ResourceSynchronizer = (serverUrl, versionFile, onComplete) ->
 
 	xhr.send()
 
-ResourceSynchronizer 'http://localhost:3000/', 'busters.json', -> cc.log "resourece synchronize done, see dir: #{cc.FileUtils.getInstance().getWritablePath()}"
+if cc.sys.isNative
+	ResourceSynchronizer 'http://localhost:3000/', 'busters.json', ->
+		cc.log "resourece synchronize done, see dir: #{cc.FileUtils.getInstance().getWritablePath()}"
+		cc.game.run()
+else
+	cc.game.run()
+
+

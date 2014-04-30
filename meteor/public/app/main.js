@@ -1,32 +1,5 @@
 (function() {
-  cc.game.prepare();
-
-}).call(this);
-
-(function() {
-  var TestScene;
-
-  TestScene = cc.Scene.extend({
-    onEnter: function() {
-      this._super();
-      return this.addChild(cc.LayerColor.create(cc.color(255, 255, 0, 255)));
-    }
-  });
-
-  cc.game.onStart = function() {
-    cc.view.setDesignResolutionSize(800, 450, cc.ResolutionPolicy.SHOW_ALL);
-    cc.view.resizeWithBrowserSize(true);
-    return cc.LoaderScene.preload({}, function() {
-      return cc.director.runScene(new TestScene());
-    });
-  };
-
-}).call(this);
-
-(function() {
   var ResourceSynchronizer;
-
-  cc.game.run();
 
   ResourceSynchronizer = function(serverUrl, versionFile, onComplete) {
     var checkDownloadCount, downloadCount, downloadFile, xhr;
@@ -82,8 +55,13 @@
     return xhr.send();
   };
 
-  ResourceSynchronizer('http://localhost:3000/', 'busters.json', function() {
-    return cc.log("resourece synchronize done, see dir: " + (cc.FileUtils.getInstance().getWritablePath()));
-  });
+  if (cc.sys.isNative) {
+    ResourceSynchronizer('http://localhost:3000/', 'busters.json', function() {
+      cc.log("resourece synchronize done, see dir: " + (cc.FileUtils.getInstance().getWritablePath()));
+      return cc.game.run();
+    });
+  } else {
+    cc.game.run();
+  }
 
 }).call(this);

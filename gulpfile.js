@@ -8,11 +8,18 @@ var bust = require('gulp-buster');
 var jeditor = require("gulp-json-editor");
 
 var paths = {
-	scripts: ['src/main.begin.coffee', 'src/main/**/*.coffee', 'src/main.end.coffee'],
 	app: 'meteor/public/app/',
+
+	appCoffee: 'src/app/**/*.coffee',
+	mainCoffee: 'src/main.coffee',
+	meteorAppJs: 'meteor/public/app/src/',
+	meteorMainJs: 'meteor/public/app/',
+
 	public: 'meteor/public/',
 	cocos2d: 'cocos2d-js/app/'
 };
+
+var needUglify = false;
 
 gulp.task('doctor', function() {
 	if (!fs.existsSync('cocos2d-js')) {
@@ -24,18 +31,23 @@ gulp.task('doctor', function() {
 });
 
 gulp.task('build', function() {
-	return gulp.src(paths.scripts)
+	var streamMain = gulp.src(paths.mainCoffee)
 	.pipe(coffee())
 	.pipe(concat('main.js'))
-	.pipe(gulp.dest(paths.app));
-});
+	if (needUglify) {
+		streamMain.pipe(uglify())
+	};
+	
+	streamMain.pipe(gulp.dest(paths.meteorMainJs));
 
-gulp.task('uglify', function() {
-	return gulp.src(paths.scripts)
+	var streamApp = gulp.src(paths.appCoffee)
 	.pipe(coffee())
-	.pipe(concat('main.js'))
-	.pipe(uglify())
-	.pipe(gulp.dest(paths.app));
+	.pipe(concat('app.js'))
+	if (needUglify) {
+		streamApp.pipe(uglify())
+	};
+	
+	return streamApp.pipe(gulp.dest(paths.meteorAppJs));
 });
 
 gulp.task('busters', function() {
@@ -47,12 +59,8 @@ gulp.task('busters', function() {
 	process.chdir(oldCwd);
 });
 
-gulp.task('watch-coffee-build', function () {
-	gulp.watch(paths.scripts, ['build']);
-})
-
-gulp.task('watch-coffee-uglify', function () {
-	gulp.watch(paths.scripts, ['uglify']);
+gulp.task('watch-src', function () {
+	gulp.watch([paths.appCoffee, paths.mainCoffee], ['build']);
 })
 
 gulp.task('watch-resource', function () {
@@ -68,16 +76,19 @@ gulp.task('publish', function () {
 	return gulp.src(paths.cocos2d + 'project.json')
 	.pipe(jeditor(function(json) {
 		json.busters = JSON.parse(String(fs.readFileSync(paths.public + 'busters.json')));
+		json.jsList = ['src/app.js']
 		return json;
 	}))
 	.pipe(gulp.dest(paths.cocos2d));
 });
 
-gulp.task('debug', ['watch-coffee-build', 'watch-resource'], function () {
+gulp.task('debug', ['watch-src', 'watch-resource'], function () {
+	needUglify = false;
 	gulp.watch(paths.public + 'busters.json', ['publish']);
 })
 
-gulp.task('release', ['watch-coffee-uglify', 'watch-resource'], function () {
+gulp.task('release', ['watch-src', 'watch-resource'], function () {
+	needUglify = true;
 	gulp.watch(paths.public + 'busters.json', ['publish']);
 })
 

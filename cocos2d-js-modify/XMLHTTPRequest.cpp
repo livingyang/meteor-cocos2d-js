@@ -948,12 +948,3 @@ void MinXmlHttpRequest::_js_register(JSContext *cx, JSObject *global)
     MinXmlHttpRequest::js_proto = JS_InitClass(cx, global, NULL, &MinXmlHttpRequest::js_class , MinXmlHttpRequest::_js_constructor, 0, props, funcs, NULL, NULL);
     
 }
-
-//void ResourceSynchronizer::saveResponseToFile(MinXmlHttpRequest* xhr, std::string fullPath)
-//{
-//    std::ofstream outfile(fullPath, std::ofstream::binary);
-//    
-//    outfile.write(xhr->getData(), xhr->getSize());
-//    
-//    outfile.close();
-//}
