@@ -15,6 +15,7 @@ var paths = {
 	meteorAppJs: 'meteor/public/app/src/',
 	meteorMainJs: 'meteor/public/app/',
 
+	cocos2dNetwork: 'cocos2d-js/app/frameworks/js-bindings/bindings/manual/network/',
 	public: 'meteor/public/',
 	cocos2d: 'cocos2d-js/app/'
 };
@@ -28,6 +29,8 @@ gulp.task('doctor', function() {
 	else {
 		gutil.log(gutil.colors.green('cocos2d-js project founded!'));
 	}
+	
+	gutil.log(gutil.colors.yellow('please make sure files in cocos2d-js-modify has copy to cocos2d-js project'));
 });
 
 gulp.task('build', function() {
