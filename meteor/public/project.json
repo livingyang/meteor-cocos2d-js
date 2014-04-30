@@ -1,0 +1,19 @@
+{
+  "project_type": "javascript",
+  "debugMode": 1,
+  "showFPS": true,
+  "frameRate": 60,
+  "id": "gameCanvas",
+  "renderMode": 0,
+  "engineDir": "frameworks/cocos2d-html5",
+  "modules": ["cocos2d"],
+  "jsList": ["src/app.js"],
+  "busters": {
+    "main.js": "8f61f558ae702dbada512b8884ac7d46",
+    "res/CloseNormal.png": "452f511043767ee25e8b3cf5f475013d",
+    "res/CloseSelected.png": "52afbe2527fa38c9814ff8d0647422b4",
+    "res/HelloWorld.png": "56b7821d32ecf303fffc15cc7cc37e3c",
+    "res/favicon.ico": "781f88912ac3cb4084042b6a25c33ad1",
+    "src/app.js": "81668f96d61a22d238cf78784e66f103"
+  }
+}

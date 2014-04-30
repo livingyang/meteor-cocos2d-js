@@ -4,7 +4,7 @@
   cc.game.onStart = function() {
     cc.view.setDesignResolutionSize(800, 450, cc.ResolutionPolicy.SHOW_ALL);
     cc.view.resizeWithBrowserSize(true);
-    return cc.LoaderScene.preload({}, function() {
+    return cc.LoaderScene.preload([], function() {
       return cc.director.runScene(new TestScene());
     });
   };

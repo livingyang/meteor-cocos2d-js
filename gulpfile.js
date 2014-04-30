@@ -11,7 +11,7 @@ var ncp = require('ncp').ncp;
 var paths = {
 	projectJson: 'meteor/public/project.json',
 	busters: ['main.js', 'res/**', 'src/**'],
-	
+
 	appCoffee: 'src/app/**/*.coffee',
 	mainCoffee: 'src/main.coffee',
 	meteorAppJs: 'meteor/public/src/',
@@ -33,6 +33,7 @@ gulp.task('doctor', function() {
 	}
 
 	gutil.log(gutil.colors.yellow('please make sure files in cocos2d-js-modify has copy to cocos2d-js project'));
+	gutil.log(gutil.colors.yellow('please copy cocos2d-js/app/frameworks/cocos2d-html5 to meteor/public/frameworks/cocos2d-html5'));
 });
 
 gulp.task('build-main', function() {

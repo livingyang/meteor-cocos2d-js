@@ -2,9 +2,9 @@ cc.game.onStart = ->
 	cc.view.setDesignResolutionSize 800, 450, cc.ResolutionPolicy.SHOW_ALL
 	cc.view.resizeWithBrowserSize true
 
-	cc.LoaderScene.preload {}, ->
+	cc.LoaderScene.preload [], ->
 		cc.director.runScene new TestScene()
-				
+
 TestScene = cc.Scene.extend
 	onEnter: ->
 		@_super()

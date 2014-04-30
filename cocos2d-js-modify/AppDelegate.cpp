@@ -60,7 +60,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     sc->start();
     
     std::vector<std::string> searchPaths;
-    searchPaths.push_back(FileUtils::getInstance()->getWritablePath() + "app");
+    searchPaths.push_back(FileUtils::getInstance()->getWritablePath());
     FileUtils::getInstance()->setSearchPaths(searchPaths);
     
     ScriptEngineProtocol *engine = ScriptingCore::getInstance();
