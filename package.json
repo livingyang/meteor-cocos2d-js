@@ -29,6 +29,7 @@
     "gulp-concat": "~2.2.0",
     "gulp-uglify": "~0.2.1",
     "gulp-buster": "~0.2.1",
-    "gulp-json-editor": "~2.0.2"
+    "gulp-json-editor": "~2.0.2",
+    "ncp": "~0.5.1"
   }
 }

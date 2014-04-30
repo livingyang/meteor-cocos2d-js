@@ -8,13 +8,13 @@ ResourceSynchronizer = (serverUrl, versionFile, onComplete) ->
 	downloadFile = (serverUrl, filePath, serverFileHash, localFileHash, cacheFileHash) ->
 		downloadCount++
 
+		# cc.log "filePath: #{filePath}, serverFileHash: #{serverFileHash}, localFileHash: #{localFileHash}, cacheFileHash: #{cacheFileHash}"
+
 		if serverFileHash is cacheFileHash or (serverFileHash is localFileHash and cacheFileHash is '')
 			cc.log filePath + " at local is newest."
 			downloadCount--
 			return
-
-		cc.log arguments
-
+		
 		fileUrl = serverUrl + filePath
 		xhr = cc.loader.getXMLHttpRequest()
 		xhr.open "GET", fileUrl
@@ -36,8 +36,8 @@ ResourceSynchronizer = (serverUrl, versionFile, onComplete) ->
 	xhr.onreadystatechange = ->
 		localBusters = (JSON.parse cc.FileUtils.getInstance().getStringFromFile 'project.json').busters
 		if xhr.readyState is 4 and xhr.status is 200 and typeof xhr.response is 'object'
-			for filePath of xhr.response
-				downloadFile serverUrl, filePath, xhr.response[filePath], localBusters[filePath], cc.sys.localStorage.getItem(filePath)
+			for filePath of xhr.response.busters
+				downloadFile serverUrl, filePath, xhr.response.busters[filePath], localBusters[filePath], cc.sys.localStorage.getItem(filePath)
 			checkDownloadCount()
 		else
 			cc.log "ResourceSynchronizer get resource version faild."
@@ -47,7 +47,7 @@ ResourceSynchronizer = (serverUrl, versionFile, onComplete) ->
 	xhr.send()
 
 if cc.sys.isNative
-	ResourceSynchronizer 'http://localhost:3000/', 'busters.json', ->
+	ResourceSynchronizer 'http://localhost:3000/', 'project.json', ->
 		cc.log "resourece synchronize done, see dir: #{cc.FileUtils.getInstance().getWritablePath()}"
 		cc.game.run()
 else

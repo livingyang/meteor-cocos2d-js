@@ -25,3 +25,4 @@ build/Release
 node_modules
 
 cocos2d-js
+meteor/public/frameworks

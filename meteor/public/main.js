@@ -20,7 +20,6 @@
         downloadCount--;
         return;
       }
-      cc.log(arguments);
       fileUrl = serverUrl + filePath;
       xhr = cc.loader.getXMLHttpRequest();
       xhr.open("GET", fileUrl);
@@ -43,8 +42,8 @@
       var filePath, localBusters;
       localBusters = (JSON.parse(cc.FileUtils.getInstance().getStringFromFile('project.json'))).busters;
       if (xhr.readyState === 4 && xhr.status === 200 && typeof xhr.response === 'object') {
-        for (filePath in xhr.response) {
-          downloadFile(serverUrl, filePath, xhr.response[filePath], localBusters[filePath], cc.sys.localStorage.getItem(filePath));
+        for (filePath in xhr.response.busters) {
+          downloadFile(serverUrl, filePath, xhr.response.busters[filePath], localBusters[filePath], cc.sys.localStorage.getItem(filePath));
         }
         checkDownloadCount();
       } else {
@@ -56,7 +55,7 @@
   };
 
   if (cc.sys.isNative) {
-    ResourceSynchronizer('http://localhost:3000/', 'busters.json', function() {
+    ResourceSynchronizer('http://localhost:3000/', 'project.json', function() {
       cc.log("resourece synchronize done, see dir: " + (cc.FileUtils.getInstance().getWritablePath()));
       return cc.game.run();
     });

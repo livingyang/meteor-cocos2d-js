@@ -5,15 +5,17 @@ var coffee = require('gulp-coffee');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var bust = require('gulp-buster');
-var jeditor = require("gulp-json-editor");
+var jeditor = require('gulp-json-editor');
+var ncp = require('ncp').ncp;
 
 var paths = {
-	app: 'meteor/public/app/',
-
+	projectJson: 'meteor/public/project.json',
+	busters: ['main.js', 'res/**', 'src/**'],
+	
 	appCoffee: 'src/app/**/*.coffee',
 	mainCoffee: 'src/main.coffee',
-	meteorAppJs: 'meteor/public/app/src/',
-	meteorMainJs: 'meteor/public/app/',
+	meteorAppJs: 'meteor/public/src/',
+	meteorMainJs: 'meteor/public/',
 
 	cocos2dNetwork: 'cocos2d-js/app/frameworks/js-bindings/bindings/manual/network/',
 	public: 'meteor/public/',
@@ -29,70 +31,70 @@ gulp.task('doctor', function() {
 	else {
 		gutil.log(gutil.colors.green('cocos2d-js project founded!'));
 	}
-	
+
 	gutil.log(gutil.colors.yellow('please make sure files in cocos2d-js-modify has copy to cocos2d-js project'));
 });
 
-gulp.task('build', function() {
-	var streamMain = gulp.src(paths.mainCoffee)
+gulp.task('build-main', function() {
+	var stream = gulp.src(paths.mainCoffee)
 	.pipe(coffee())
 	.pipe(concat('main.js'))
 	if (needUglify) {
-		streamMain.pipe(uglify())
+		stream.pipe(uglify())
 	};
 	
-	streamMain.pipe(gulp.dest(paths.meteorMainJs));
+	stream.pipe(gulp.dest(paths.meteorMainJs));
+});
 
-	var streamApp = gulp.src(paths.appCoffee)
+gulp.task('build-app', function() {
+	var stream = gulp.src(paths.appCoffee)
 	.pipe(coffee())
 	.pipe(concat('app.js'))
 	if (needUglify) {
-		streamApp.pipe(uglify())
+		stream.pipe(uglify())
 	};
 	
-	return streamApp.pipe(gulp.dest(paths.meteorAppJs));
+	return stream.pipe(gulp.dest(paths.meteorAppJs));
 });
 
 gulp.task('busters', function() {
 	var oldCwd = process.cwd();
-	var stream = process.chdir(paths.public);
-	gulp.src("app/**")
-	.pipe(bust('busters.json'))
+	process.chdir(paths.public);
+	gulp.src(paths.busters)
+	.pipe(bust('project.json'))
+	.pipe(jeditor(function(json) {
+		var projectJson = JSON.parse(fs.readFileSync(paths.projectJson));
+		projectJson.busters = json;
+		return projectJson;
+	}))
 	.pipe(gulp.dest('.'));
 	process.chdir(oldCwd);
 });
 
 gulp.task('watch-src', function () {
-	gulp.watch([paths.appCoffee, paths.mainCoffee], ['build']);
+	gulp.watch(paths.mainCoffee, ['build-main']);
+	gulp.watch(paths.appCoffee, ['build-app']);
 })
 
 gulp.task('watch-resource', function () {
-	gulp.watch(paths.app + '**', ['busters'])
+	gulp.watch(paths.busters, ['busters'])
 })
 
 gulp.task('publish', function () {
-	// 1 copy resource
-	gulp.src(paths.app + "**")
-	.pipe(gulp.dest(paths.cocos2d));
-
-	// 2 add busters to project.json
-	return gulp.src(paths.cocos2d + 'project.json')
-	.pipe(jeditor(function(json) {
-		json.busters = JSON.parse(String(fs.readFileSync(paths.public + 'busters.json')));
-		json.jsList = ['src/app.js']
-		return json;
-	}))
-	.pipe(gulp.dest(paths.cocos2d));
+	var fileList = ['main.js', 'project.json', 'res', 'src']
+	for (var i = 0; i < fileList.length; i++) {
+		ncp(paths.public + fileList[i], paths.cocos2d + fileList[i]);
+	}
 });
 
 gulp.task('debug', ['watch-src', 'watch-resource'], function () {
 	needUglify = false;
-	gulp.watch(paths.public + 'busters.json', ['publish']);
+	gulp.watch(paths.projectJson, ['publish']);
 })
 
 gulp.task('release', ['watch-src', 'watch-resource'], function () {
 	needUglify = true;
-	gulp.watch(paths.public + 'busters.json', ['publish']);
+	gulp.watch(paths.projectJson, ['publish']);
 })
 
 gulp.task('default', ['debug']);
