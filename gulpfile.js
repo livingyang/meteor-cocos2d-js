@@ -25,7 +25,7 @@ var paths = {
 var needUglify = false;
 
 gulp.task('doctor', function() {
-	if (!fs.existsSync('cocos2d-js')) {
+	if (!fs.existsSync('cocos2d-js/app')) {
 		gutil.log(gutil.colors.red('cocos2d-js project not found, please run command: ') + 'cocos new -p org.project.name -l js -d cocos2d-js app');
 	}
 	else {
@@ -33,7 +33,7 @@ gulp.task('doctor', function() {
 	}
 
 	gutil.log(gutil.colors.yellow('please make sure files in cocos2d-js-modify has copy to cocos2d-js project'));
-	gutil.log(gutil.colors.yellow('please copy cocos2d-js/app/frameworks/cocos2d-html5 to meteor/public/frameworks/cocos2d-html5'));
+	gutil.log(gutil.colors.yellow('if you want test html5 project, copy cocos2d-js/app/frameworks/cocos2d-html5 and cocos2d-js/app/index.html to meteor/public/'));
 });
 
 gulp.task('build-main', function() {
